@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BÀI 22 – SỰ ĂN MÒN KIM LOẠI</title>
+    <!-- Tailwind CSS (Dùng CDN để có giao diện đẹp, máy cần có mạng lần đầu để tải cache, sau đó có thể chạy ổn định) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Tùy chỉnh thanh cuộn */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen text-gray-800">
+
+    <!-- Container chính -->
+    <div id="app" class="max-w-4xl mx-auto min-h-screen flex flex-col relative">
+        <!-- Nội dung sẽ được render tại đây bằng JS -->
+    </div>
+
+    <script>
+        // --- DỮ LIỆU CÂU HỎI & CẤU HÌNH ---
+        const TEACHER_NAME = "Nguyễn Mạnh Hưng";
+        const LESSON_NAME = "BÀI 22 – SỰ ĂN MÒN KIM LOẠI";
+
+        const QUESTION_DB = [
+            // --- MỨC ĐỘ 1: NHẬN BIẾT (9 Câu) ---
+            { id: 1, level: 1, question: "Sự ăn mòn kim loại là sự phá huỷ kim loại hoặc hợp kim do tác dụng của?", options: ["Các chất trong môi trường.", "Nhiệt độ cao.", "Dòng điện một chiều.", "Áp suất cao."], correct: "Các chất trong môi trường.", explanation: "Khái niệm cơ bản: Ăn mòn kim loại là sự phá hủy kim loại do tác dụng hóa học của môi trường." },
+            { id: 2, level: 1, question: "Trong các dạng ăn mòn sau, dạng nào phát sinh dòng điện?", options: ["Ăn mòn điện hóa.", "Ăn mòn hóa học.", "Cả hai đều phát sinh.", "Cả hai đều không phát sinh."], correct: "Ăn mòn điện hóa.", explanation: "Chỉ có ăn mòn điện hóa mới có sự chuyển dịch electron tạo thành dòng điện." },
+            { id: 3, level: 1, question: "Trong quá trình ăn mòn điện hóa, tại cực âm (anode) xảy ra quá trình gì?", options: ["Oxi hóa.", "Khử.", "Nhận electron.", "Kết tủa."], correct: "Oxi hóa.", explanation: "Tại anode (cực âm) của ăn mòn điện hóa xảy ra quá trình oxi hóa kim loại." },
+            { id: 4, level: 1, question: "Kim loại nào sau đây có khả năng bảo vệ Iron (sắt) khỏi bị ăn mòn theo phương pháp điện hóa?", options: ["Zinc (kẽm).", "Copper (đồng).", "Silver (bạc).", "Lead (chì)."], correct: "Zinc (kẽm).", explanation: "Zinc (kẽm) có tính khử mạnh hơn Iron (sắt) nên sẽ bị ăn mòn thay (làm anode hi sinh)." },
+            { id: 5, level: 1, question: "Khi Iron (sắt) bị ăn mòn điện hóa trong không khí ẩm, tinh thể hydrate hình thành có màu nâu đỏ là gỉ sắt. Công thức chính của gỉ sắt là?", options: ["Fe<sub>2</sub>O<sub>3</sub>.nH<sub>2</sub>O.", "Fe<sub>3</sub>O<sub>4</sub>.", "Fe(OH)<sub>2</sub>.", "FeCl<sub>3</sub>."], correct: "Fe<sub>2</sub>O<sub>3</sub>.nH<sub>2</sub>O.", explanation: "Gỉ sắt chủ yếu là Fe<sub>2</sub>O<sub>3</sub> ngậm nước (Fe<sub>2</sub>O<sub>3</sub>.nH<sub>2</sub>O)." },
+            { id: 6, level: 1, question: "Chất nào sau đây đóng vai trò là chất điện li trong quá trình ăn mòn vỏ tàu biển?", options: ["Nước biển (chứa sodium chloride...).", "Nước cất.", "Dầu hỏa.", "Không khí khô."], correct: "Nước biển (chứa sodium chloride...).", explanation: "Nước biển chứa các muối hòa tan như sodium chloride đóng vai trò là dung dịch chất điện li." },
+            { id: 7, level: 1, question: "Trong ăn mòn điện hóa, cực dương được gọi là gì?", options: ["Cathode.", "Anode.", "Điện cực trơ.", "Cầu muối."], correct: "Cathode.", explanation: "Trong pin điện hóa (cơ chế ăn mòn), cực dương là cathode, cực âm là anode." },
+            { id: 8, level: 1, question: "Biện pháp nào sau đây KHÔNG phải là cách chống ăn mòn kim loại?", options: ["Ngâm kim loại trong nước muối.", "Sơn, mạ, tráng men.", "Dùng phương pháp điện hóa.", "Chế tạo hợp kim không gỉ."], correct: "Ngâm kim loại trong nước muối.", explanation: "Ngâm trong nước muối thúc đẩy quá trình ăn mòn điện hóa diễn ra nhanh hơn." },
+            { id: 9, level: 1, question: "Bản chất của quá trình ăn mòn kim loại là quá trình gì?", options: ["Oxi hóa - khử.", "Phân hủy.", "Trao đổi ion.", "Thủy phân."], correct: "Oxi hóa - khử.", explanation: "Kim loại bị oxi hóa thành ion dương, chất trong môi trường bị khử." },
+
+            // --- MỨC ĐỘ 2: THÔNG HIỂU (9 Câu) ---
+            { id: 10, level: 2, question: "Một vật bằng hợp kim Zn-Cu để trong không khí ẩm. Quá trình xảy ra tại cực dương (cathode) là?", options: ["O<sub>2</sub> + 2H<sub>2</sub>O + 4e → 4OH<sup>-</sup>.", "Zn → Zn<sup>2+</sup> + 2e.", "2H<sup>+</sup> + 2e → H<sub>2</sub>.", "Cu → Cu<sup>2+</sup> + 2e."], correct: "O<sub>2</sub> + 2H<sub>2</sub>O + 4e → 4OH<sup>-</sup>.", explanation: "Tại cathode (cực Cu), oxygen không khí kết hợp với water nhận e tạo ra ion OH<sup>-</sup>." },
+            { id: 11, level: 2, question: "Vì sao các thiết bị máy móc bằng kim loại thường được bôi dầu mỡ?", options: ["Để cách li kim loại với môi trường.", "Để kim loại bóng đẹp hơn.", "Để giảm ma sát đơn thuần.", "Để dẫn điện tốt hơn."], correct: "Để cách li kim loại với môi trường.", explanation: "Dầu mỡ ngăn cản kim loại tiếp xúc trực tiếp với oxygen và hơi nước (water), ngăn chặn ăn mòn." },
+            { id: 12, level: 2, question: "Đúng hay Sai: Iron (sắt) nguyên chất khó bị ăn mòn hơn thép (hợp kim Fe-C) khi để trong không khí ẩm?", options: ["Đúng.", "Sai."], correct: "Đúng.", explanation: "Thép chứa C và Fe tạo thành các cặp điện cực gây ăn mòn điện hóa, trong khi Fe nguyên chất chỉ bị ăn mòn hóa học chậm hơn." },
+            { id: 13, level: 2, question: "Điều kiện CẦN và ĐỦ để xảy ra ăn mòn điện hóa là gì?", options: ["(1) Các điện cực khác chất, (2) Tiếp xúc trực tiếp/gián tiếp, (3) Cùng tiếp xúc dung dịch điện li.", "Chỉ cần 2 kim loại tiếp xúc nhau.", "Chỉ cần kim loại tiếp xúc dung dịch acid.", "Kim loại phải không nguyên chất."], correct: "(1) Các điện cực khác chất, (2) Tiếp xúc trực tiếp/gián tiếp, (3) Cùng tiếp xúc dung dịch điện li.", explanation: "Phải hội tụ đủ 3 điều kiện trên thì ăn mòn điện hóa mới xảy ra." },
+            { id: 14, level: 2, question: "Khi nối dây dẫn điện bằng Copper (đồng) với dây bằng Aluminium (nhôm) và để ngoài trời, hiện tượng gì xảy ra tại chỗ nối?", options: ["Dây Aluminium bị ăn mòn nhanh chóng.", "Dây Copper bị ăn mòn nhanh chóng.", "Không có hiện tượng gì.", "Cả hai dây bền hơn."], correct: "Dây Aluminium bị ăn mòn nhanh chóng.", explanation: "Al hoạt động mạnh hơn Cu, Al đóng vai trò anode nên bị ăn mòn điện hóa." },
+            { id: 15, level: 2, question: "So sánh ăn mòn hóa học và ăn mòn điện hóa, điểm giống nhau cơ bản là:", options: ["Đều là quá trình oxi hóa - khử.", "Đều phát sinh dòng điện.", "Đều cần dung dịch chất điện li.", "Đều xảy ra ở nhiệt độ cao."], correct: "Đều là quá trình oxi hóa - khử.", explanation: "Cả hai đều là quá trình kim loại nhường electron (bị oxi hóa)." },
+            { id: 16, level: 2, question: "Vỏ đồ hộp làm bằng Iron (sắt) tây (sắt tráng thiếc - Tin). Nếu lớp thiếc bị xước sâu tới lớp sắt thì:", options: ["Iron (sắt) bị ăn mòn nhanh hơn.", "Tin (thiếc) bị ăn mòn nhanh hơn.", "Cả hai không bị ăn mòn.", "Iron được bảo vệ."], correct: "Iron (sắt) bị ăn mòn nhanh hơn.", explanation: "Fe hoạt động mạnh hơn Sn (thiếc). Fe là anode, Sn là cathode. Fe bị ăn mòn điện hóa." },
+            { id: 17, level: 2, question: "Để bảo vệ đường ống dẫn dầu bằng thép chôn dưới đất, người ta thường gắn vào đường ống các khối kim loại nào?", options: ["Zinc (kẽm) hoặc Magnesium (magie).", "Copper (đồng).", "Lead (chì).", "Silver (bạc)."], correct: "Zinc (kẽm) hoặc Magnesium (magie).", explanation: "Cần kim loại hoạt động hóa học mạnh hơn Fe để làm anode hi sinh." },
+            { id: 18, level: 2, question: "Thí nghiệm: Nhúng thanh Fe và thanh Cu (không tiếp xúc) vào dung dịch H<sub>2</sub>SO<sub>4</sub> loãng. Nối dây dẫn giữa hai thanh. Hiện tượng nào chứng tỏ có ăn mòn điện hóa?", options: ["Bọt khí H<sub>2</sub> thoát ra mạnh ở thanh Cu.", "Bọt khí H<sub>2</sub> chỉ thoát ra ở thanh Fe.", "Thanh Cu tan dần.", "Dung dịch chuyển màu xanh."], correct: "Bọt khí H<sub>2</sub> thoát ra mạnh ở thanh Cu.", explanation: "Electron chuyển từ Fe sang Cu. Tại Cu (cathode), ion H<sup>+</sup> nhận e tạo khí H<sub>2</sub>." },
+
+            // --- MỨC ĐỘ 3: VẬN DỤNG (7 Câu) ---
+            { id: 19, level: 3, question: "Ghép đôi: Một con tàu biển có vỏ thép (thành phần chính là Iron). Các chi tiết sau đây làm bằng kim loại gì sẽ gây hại (tăng tốc độ ăn mòn) cho vỏ tàu nhất?", options: ["Chi tiết làm bằng Copper (đồng).", "Chi tiết làm bằng Zinc (kẽm).", "Chi tiết làm bằng Magnesium (magie).", "Chi tiết làm bằng Chromium (crom)."], correct: "Chi tiết làm bằng Copper (đồng).", explanation: "Cu có tính khử yếu hơn Fe rất nhiều. Nếu gắn Cu vào vỏ tàu, Fe sẽ trở thành anode và bị ăn mòn rất mạnh." },
+            { id: 20, level: 3, question: "Tình huống: Một người thợ xây dựng dùng đinh thép để đóng vào một tấm tôn (Iron tráng Zinc). Tại điểm đóng đinh, lớp Zinc bị thủng. Sau một thời gian, cái đinh hay tấm tôn bị gỉ trước?", options: ["Lớp Zinc của tấm tôn bị ăn mòn để bảo vệ đinh thép.", "Đinh thép bị gỉ sét ngay lập tức.", "Cả hai hỏng cùng lúc.", "Không có ăn mòn xảy ra."], correct: "Lớp Zinc của tấm tôn bị ăn mòn để bảo vệ đinh thép.", explanation: "Zn mạnh hơn Fe (trong thép). Zn đóng vai trò anode hi sinh, bảo vệ Fe (cathode) cho đến khi lớp Zn bị ăn mòn hết." },
+            { id: 21, level: 3, question: "Gang và thép đều là hợp kim của Iron (sắt) với Carbon. Vì sao trong không khí ẩm, gang thường bị ăn mòn nhanh hơn thép?", options: ["Vì gang có hàm lượng Carbon cao hơn.", "Vì gang cứng hơn thép.", "Vì gang chứa ít Iron hơn.", "Vì thép có cấu trúc tinh thể bền hơn."], correct: "Vì gang có hàm lượng Carbon cao hơn.", explanation: "Hàm lượng C cao hơn tạo ra nhiều cặp điện cực Fe-C hơn trên bề mặt, thúc đẩy tốc độ ăn mòn điện hóa mạnh hơn." },
+            { id: 22, level: 3, question: "Tại sao các đồ vật bằng Aluminium (nhôm) bền trong không khí và nước, dù Al là kim loại hoạt động mạnh?", options: ["Do có lớp màng oxide (Al<sub>2</sub>O<sub>3</sub>) mỏng, bền bảo vệ.", "Do Al không tác dụng với oxygen.", "Do Al là kim loại quý.", "Do Al có thế điện cực dương."], correct: "Do có lớp màng oxide (Al<sub>2</sub>O<sub>3</sub>) mỏng, bền bảo vệ.", explanation: "Al phản ứng ngay với oxygen tạo lớp màng Al<sub>2</sub>O<sub>3</sub> rất mịn, bền chắc, ngăn cản sự ăn mòn sâu vào bên trong (sự thụ động hóa)." },
+            { id: 23, level: 3, question: "Trong thực tế, việc tráng một lớp kim loại này lên kim loại khác (như tôn tráng kẽm, sắt tây tráng thiếc) dựa trên nguyên tắc nào của ăn mòn điện hóa?", options: ["Ngăn cách cơ học (nếu lớp phủ còn nguyên) hoặc bảo vệ điện hóa (nếu lớp phủ mạnh hơn).", "Chỉ là trang trí.", "Làm tăng độ dẫn điện.", "Làm giảm nhiệt độ nóng chảy."], correct: "Ngăn cách cơ học (nếu lớp phủ còn nguyên) hoặc bảo vệ điện hóa (nếu lớp phủ mạnh hơn).", explanation: "Nếu lớp phủ (như Zn) mạnh hơn, nó bảo vệ điện hóa. Nếu yếu hơn (như Sn), nó chỉ bảo vệ cơ học (cách ly)." },
+            { id: 24, level: 3, question: "Suy luận: Tại sao ngâm dao làm bằng thép carbon trong nước chanh (có acid citric) thì dao bị mòn nhanh, đồng thời có mùi tanh kim loại?", options: ["Xảy ra ăn mòn điện hóa trong môi trường điện li acid.", "Chỉ xảy ra ăn mòn hóa học.", "Nước chanh hòa tan carbon.", "Do acid citric là acid mạnh."], correct: "Xảy ra ăn mòn điện hóa trong môi trường điện li acid.", explanation: "Thép (Fe-C) trong dung dịch chất điện li (acid hữu cơ trong chanh) tạo vô số pin điện hóa nhỏ, Fe bị ăn mòn giải phóng ion sắt gây mùi tanh." },
+            { id: 25, level: 3, question: "Ứng dụng: Khi nối một thanh Magnesium vào vỏ tàu thép, khối lượng thanh Magnesium sẽ thay đổi thế nào sau một thời gian dài hoạt động?", options: ["Giảm đi đáng kể.", "Tăng lên do bám rêu.", "Không đổi.", "Tăng lên do oxi hóa."], correct: "Giảm đi đáng kể.", explanation: "Mg đóng vai trò Anode hi sinh để bảo vệ vỏ tàu (Cathode). Mg bị oxi hóa và tan dần vào nước biển." }
+        ];
+
+        // --- GLOBAL STATE ---
+        const state = {
+            view: 'start', // start, game, result, teacher
+            student: { name: '', className: '' },
+            currentQIndex: 0,
+            score: 0, // số câu đúng
+            timeLeft: 0,
+            timerId: null,
+            shuffledOptions: [],
+            isAnswered: false,
+            // Để đảo đáp án
+        };
+
+        const app = document.getElementById('app');
+
+        // --- UTILS ---
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // --- RENDER FUNCTIONS ---
+
+        function renderStartScreen() {
+            app.innerHTML = `
+                <div class="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 to-indigo-100 fade-in">
+                    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-t-4 border-blue-600">
+                        <div class="text-center mb-6">
+                            <i data-lucide="book-open" class="w-16 h-16 text-blue-600 mx-auto mb-2"></i>
+                            <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-wide">${LESSON_NAME}</h1>
+                            <p class="text-gray-500 mt-2 text-sm">Giáo viên thiết kế: ${TEACHER_NAME}</p>
+                        </div>
+                        <form id="startForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Họ và tên học sinh</label>
+                                <input type="text" id="inputName" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" placeholder="Nhập họ tên của bạn...">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Lớp</label>
+                                <input type="text" id="inputClass" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition" placeholder="Ví dụ: 12A1">
+                            </div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition transform hover:scale-105 flex items-center justify-center gap-2 mt-4 shadow-lg">
+                                <i data-lucide="play" class="w-5 h-5"></i> BẮT ĐẦU TRÒ CHƠI
+                            </button>
+                        </form>
+                        <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+                            <button onclick="renderTeacherLogin()" class="text-gray-400 hover:text-gray-600 text-sm flex items-center justify-center gap-1 mx-auto transition">
+                                <i data-lucide="user" class="w-4 h-4"></i> Dành cho Giáo viên
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+
+            document.getElementById('startForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('inputName').value.trim();
+                const className = document.getElementById('inputClass').value.trim();
+                if (name && className) {
+                    state.student = { name, className };
+                    startGame();
+                }
+            });
+        }
+
+        function startGame() {
+            state.currentQIndex = 0;
+            state.score = 0;
+            state.view = 'game';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = QUESTION_DB[state.currentQIndex];
+            state.isAnswered = false;
+            state.shuffledOptions = shuffleArray(q.options);
+            
+            // Xử lý thời gian (Fix lỗi timer tại đây: Set time trước khi render)
+            let time = 15;
+            if (q.level === 2) time = 30;
+            if (q.level === 3) time = 120;
+            state.timeLeft = time;
+
+            renderGameScreen();
+            startTimer();
+        }
+
+        function startTimer() {
+            if (state.timerId) clearInterval(state.timerId);
+            
+            state.timerId = setInterval(() => {
+                if (state.timeLeft > 0) {
+                    state.timeLeft--;
+                    // Cập nhật giao diện đồng hồ trực tiếp để mượt mà không cần re-render cả trang
+                    const timerDisplay = document.getElementById('timerDisplay');
+                    const timerIcon = document.getElementById('timerIconContainer');
+                    if (timerDisplay) {
+                        timerDisplay.innerText = state.timeLeft + 's';
+                        if (state.timeLeft <= 5) {
+                            timerIcon.classList.remove('bg-blue-50', 'text-blue-600');
+                            timerIcon.classList.add('bg-red-100', 'text-red-600', 'animate-pulse');
+                        }
+                    }
+                } else {
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOut() {
+            clearInterval(state.timerId);
+            state.isAnswered = true;
+            showFeedback(false, "Hết giờ!", `Đáp án đúng là: ${QUESTION_DB[state.currentQIndex].correct}.\n\n${QUESTION_DB[state.currentQIndex].explanation}`);
+        }
+
+        function handleAnswer(selectedOption) {
+            if (state.isAnswered) return;
+            clearInterval(state.timerId);
+            state.isAnswered = true;
+
+            const q = QUESTION_DB[state.currentQIndex];
+            const isCorrect = selectedOption === q.correct;
+            
+            if (isCorrect) state.score++;
+
+            // Render lại để hiển thị màu đáp án đúng/sai
+            renderGameScreen(selectedOption);
+
+            if (isCorrect) {
+                showFeedback(true, "Chính xác!", q.explanation);
+            } else {
+                showFeedback(false, "Sai rồi!", `Đáp án đúng là: ${q.correct}.\n\n${q.explanation}`);
+            }
+        }
+
+        function showFeedback(isCorrect, title, explanation) {
+            const modal = document.createElement('div');
+            modal.className = "fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50 fade-in";
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 transform transition-all scale-100">
+                    <div class="text-center mb-4 ${isCorrect ? 'text-green-600' : 'text-red-600'}">
+                        <i data-lucide="${isCorrect ? 'check-circle' : 'x-circle'}" class="w-16 h-16 mx-auto mb-2"></i>
+                        <h2 class="text-2xl font-bold">${title}</h2>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl mb-6 text-gray-700 text-sm md:text-base leading-relaxed border-l-4 border-blue-400">
+                        <span class="font-bold block mb-1">Giải thích:</span>
+                        ${explanation.replace(/\n/g, '<br>')}
+                    </div>
+                    <button id="nextBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition">
+                        ${state.currentQIndex < QUESTION_DB.length - 1 ? 'Câu tiếp theo' : 'Xem kết quả'}
+                        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            lucide.createIcons();
+            
+            document.getElementById('nextBtn').onclick = () => {
+                modal.remove();
+                if (state.currentQIndex < QUESTION_DB.length - 1) {
+                    state.currentQIndex++;
+                    loadQuestion();
+                } else {
+                    finishGame();
+                }
+            };
+        }
+
+        function renderGameScreen(selectedOption = null) {
+            const q = QUESTION_DB[state.currentQIndex];
+            const displayScore = state.score * 4;
+            const progressPercent = (state.currentQIndex / QUESTION_DB.length) * 100;
+            
+            let levelColor = q.level === 1 ? 'bg-green-100 text-green-800' : q.level === 2 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
+            let levelText = q.level === 1 ? 'Nhận biết (15s)' : q.level === 2 ? 'Thông hiểu (30s)' : 'Vận dụng (120s)';
+
+            let optionsHtml = state.shuffledOptions.map(opt => {
+                let btnClass = "bg-white border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50";
+                let icon = "";
+                
+                if (state.isAnswered) {
+                    if (opt === q.correct) {
+                        btnClass = "bg-green-100 border-green-500 text-green-800";
+                        icon = `<i data-lucide="check-circle" class="text-green-600 w-5 h-5"></i>`;
+                    } else if (opt === selectedOption) {
+                        btnClass = "bg-red-100 border-red-500 text-red-800";
+                        icon = `<i data-lucide="x-circle" class="text-red-600 w-5 h-5"></i>`;
+                    } else {
+                        btnClass = "bg-gray-100 border-gray-200 text-gray-400 opacity-60";
+                    }
+                }
+
+                // Chuyển ký tự đặc biệt trong HTML để tránh lỗi
+                const safeOpt = opt.replace(/"/g, '&quot;');
+                
+                return `
+                    <button onclick="handleAnswer('${safeOpt}')" ${state.isAnswered ? 'disabled' : ''} 
+                        class="p-5 rounded-xl text-left transition-all duration-200 text-lg flex items-center justify-between group ${btnClass}">
+                        <span>${opt}</span>
+                        ${icon}
+                    </button>
+                `;
+            }).join('');
+
+            app.innerHTML = `
+                <div class="bg-white shadow-sm p-4 sticky top-0 z-10">
+                    <div class="max-w-4xl mx-auto flex justify-between items-center">
+                        <div>
+                            <h2 class="font-bold text-gray-800">${state.student.name}</h2>
+                            <p class="text-xs text-gray-500">${state.student.className}</p>
+                        </div>
+                        <div class="flex items-center gap-6">
+                            <div class="text-center">
+                                <p class="text-xs text-gray-400 uppercase">Điểm số</p>
+                                <p class="font-bold text-xl text-blue-600">${displayScore}</p>
+                            </div>
+                            <div id="timerIconContainer" class="flex items-center gap-2 font-mono font-bold text-xl px-4 py-2 rounded-full ${state.timeLeft <= 5 ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-blue-50 text-blue-600'}">
+                                <i data-lucide="clock" class="w-5 h-5"></i>
+                                <span id="timerDisplay">${state.timeLeft}s</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full bg-gray-200 h-2 mt-4 rounded-full overflow-hidden">
+                        <div class="bg-blue-500 h-full transition-all duration-500" style="width: ${progressPercent}%"></div>
+                    </div>
+                </div>
+
+                <div class="flex-1 max-w-3xl w-full mx-auto p-4 flex flex-col justify-center fade-in">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${levelColor}">
+                                Câu ${state.currentQIndex + 1}/25 - ${levelText}
+                            </span>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-medium text-gray-800 leading-relaxed">
+                            ${q.question}
+                        </h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function finishGame() {
+            const finalScore = state.score * 4;
+            const timestamp = new Date().toLocaleString('vi-VN');
+            
+            // Lưu kết quả
+            const resultData = {
+                name: state.student.name,
+                className: state.student.className,
+                score: finalScore,
+                timestamp: timestamp
+            };
+            const currentData = JSON.parse(localStorage.getItem('quiz_results') || '[]');
+            currentData.push(resultData);
+            localStorage.setItem('quiz_results', JSON.stringify(currentData));
+
+            // Đánh giá
+            let message = "Cần cố gắng hơn! Hãy ôn lại bài 22 nhé.";
+            let iconColor = "text-orange-400";
+            let iconName = "book-open";
+            
+            if (finalScore >= 90) {
+                message = "Xuất sắc! Bạn là một chuyên gia hóa học!";
+                iconColor = "text-yellow-400";
+                iconName = "award";
+            } else if (finalScore >= 70) {
+                message = "Làm tốt lắm! Bạn nắm khá vững kiến thức.";
+                iconColor = "text-blue-500";
+                iconName = "check-circle";
+            }
+
+            app.innerHTML = `
+                <div class="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center p-4 font-sans fade-in">
+                    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full text-center">
+                        <i data-lucide="${iconName}" class="w-24 h-24 ${iconColor} mx-auto mb-4"></i>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Kết quả chung cuộc</h2>
+                        <div class="text-6xl font-black text-blue-600 mb-4">${finalScore}<span class="text-2xl text-gray-400">/100</span></div>
+                        <p class="text-gray-600 mb-8">${message}</p>
+                        <div class="space-y-3">
+                            <button onclick="renderStartScreen()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Chơi lại</button>
+                            <button onclick="renderStartScreen()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">Về màn hình chính</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // --- TEACHER FUNCTIONS ---
+
+        function renderTeacherLogin() {
+            app.innerHTML = `
+                <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4 fade-in">
+                    <form id="loginForm" class="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm">
+                        <h2 class="text-xl font-bold mb-4 text-center">Đăng nhập Giáo viên</h2>
+                        <input type="password" id="password" class="w-full px-4 py-2 border rounded-lg mb-4" placeholder="Nhập mật khẩu (admin123)">
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Đăng nhập</button>
+                        <button type="button" onclick="renderStartScreen()" class="w-full mt-2 text-gray-500 text-sm hover:underline">Quay lại</button>
+                    </form>
+                </div>
+            `;
+            document.getElementById('loginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (document.getElementById('password').value === 'admin123') {
+                    renderTeacherDashboard();
+                } else {
+                    alert('Mật khẩu sai!');
+                }
+            });
+        }
+
+        function renderTeacherDashboard() {
+            const results = JSON.parse(localStorage.getItem('quiz_results') || '[]').reverse();
+            
+            let rows = results.length === 0 
+                ? `<tr><td colspan="4" class="p-8 text-center text-gray-400">Chưa có dữ liệu học sinh</td></tr>`
+                : results.map(r => `
+                    <tr class="hover:bg-gray-50 border-b last:border-0">
+                        <td class="p-4 text-gray-500 text-sm">${r.timestamp}</td>
+                        <td class="p-4 font-medium text-gray-800">${r.name}</td>
+                        <td class="p-4 text-gray-600">${r.className}</td>
+                        <td class="p-4 font-bold text-blue-600">${r.score}</td>
+                    </tr>
+                `).join('');
+
+            app.innerHTML = `
+                <div class="min-h-screen bg-gray-50 p-6 font-sans fade-in">
+                    <div class="max-w-5xl mx-auto">
+                        <div class="flex justify-between items-center mb-8">
+                            <h1 class="text-2xl font-bold flex items-center gap-2 text-gray-800">
+                                <i data-lucide="users"></i> Quản lý kết quả học tập
+                            </h1>
+                            <button onclick="renderStartScreen()" class="text-blue-600 font-medium hover:underline">Về trang chủ</button>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 flex gap-4 flex-wrap">
+                            <button onclick="downloadCSV()" class="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                <i data-lucide="download"></i> Tải kết quả (Excel/CSV)
+                            </button>
+                            <button onclick="clearData()" class="flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition">
+                                <i data-lucide="trash-2"></i> Xóa dữ liệu lớp
+                            </button>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow overflow-hidden">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-gray-100 border-b">
+                                    <tr>
+                                        <th class="p-4 font-semibold text-gray-600">Thời gian</th>
+                                        <th class="p-4 font-semibold text-gray-600">Họ và tên</th>
+                                        <th class="p-4 font-semibold text-gray-600">Lớp</th>
+                                        <th class="p-4 font-semibold text-gray-600">Điểm số</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rows}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function downloadCSV() {
+            const results = JSON.parse(localStorage.getItem('quiz_results') || '[]');
+            
+            // 1. Định nghĩa tiêu đề cột
+            const headers = ["STT", "Họ và tên", "Lớp", "Điểm số", "Thời gian"];
+            
+            // 2. Map dữ liệu sang định dạng CSV
+            // Thêm dấu ngoặc kép "" quanh text để tránh lỗi nếu tên có dấu phẩy
+            const csvRows = results.map((r, index) => {
+                return [
+                    index + 1,              // STT
+                    `"${r.name}"`,          // Họ tên
+                    `"${r.className}"`,     // Lớp
+                    r.score,                // Điểm
+                    `"${r.timestamp}"`      // Thời gian
+                ].join(",");
+            });
+
+            // 3. Kết hợp Header và Rows, thêm BOM (\uFEFF) để Excel hiển thị đúng Tiếng Việt
+            const csvString = headers.join(",") + "\n" + csvRows.join("\n");
+            const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' });
+            
+            // 4. Tạo link tải về
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Ket_qua_an_mon_kim_loai.csv");
+            document.body.appendChild(link);
+            link.click();
+            
+            // 5. Dọn dẹp
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function clearData() {
+            if (confirm('Bạn có chắc muốn xóa toàn bộ dữ liệu kết quả không?')) {
+                localStorage.removeItem('quiz_results');
+                renderTeacherDashboard();
+            }
+        }
+
+        // --- INIT ---
+        renderStartScreen();
+    </script>
+</body>
+</html>
